@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Canal de Denúncias — Vazamento de Dados</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="wrap topo-in">
+      <div class="marca"><span class="escudo" aria-hidden="true">&#9919;</span> Canal de Denúncias</div>
+      <nav id="nav">
+        <button data-tab="denunciar" class="ativo">Denunciar</button>
+        <button data-tab="acompanhar">Acompanhar</button>
+        <button data-tab="painel">Equipe</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ================= DENUNCIAR ================= -->
+    <section id="tab-denunciar" class="aba">
+      <h1>Relate um incidente de forma segura</h1>
+      <p class="sub">Vazamento de dados, acesso indevido, prática inadequada de segurança ou atividade suspeita.
+        Seus dados são criptografados e você pode denunciar <strong>sem se identificar</strong>.</p>
+
+      <form id="form-denuncia" class="cartao">
+        <label>Tipo de ocorrência
+          <select id="d-categoria" required></select>
+        </label>
+        <label>O que aconteceu?
+          <textarea id="d-descricao" rows="6" minlength="20" maxlength="5000" required
+            placeholder="Descreva o fato: o que, quando, onde e como você soube."></textarea>
+        </label>
+        <p class="dica">Princípio da necessidade: não inclua CPF, senhas ou dados pessoais de terceiros no texto. Descreva o fato, não os dados.</p>
+        <label>Empresa ou área envolvida <span class="op">(opcional)</span>
+          <input id="d-empresa" maxlength="200">
+        </label>
+
+        <fieldset>
+          <legend>Identificação</legend>
+          <label class="linha"><input type="radio" name="anon" value="1" checked> Quero ficar anônimo (recomendado)</label>
+          <label class="linha"><input type="radio" name="anon" value="0"> Quero me identificar</label>
+          <div id="bloco-ident" hidden>
+            <label>Nome <input id="d-nome" maxlength="120"></label>
+            <label>E-mail <input id="d-email" type="email" maxlength="160"></label>
+            <label>Vínculo
+              <select id="d-vinculo">
+                <option value="colaborador">Colaborador</option>
+                <option value="parceiro">Parceiro</option>
+                <option value="terceiro">Terceiro</option>
+              </select>
+            </label>
+            <label class="linha consent"><input type="checkbox" id="d-consent">
+              Consinto o tratamento do meu nome e e-mail <strong>apenas</strong> para apurar esta denúncia (finalidade).
+              Posso revogar e eliminar minha identificação a qualquer momento pelo acompanhamento.</label>
+          </div>
+        </fieldset>
+
+        <button class="primario" type="submit">Enviar denúncia</button>
+        <p id="d-erro" class="erro" role="alert"></p>
+      </form>
+
+      <div id="d-sucesso" class="cartao sucesso" hidden>
+        <h2>Denúncia registrada</h2>
+        <p>Guarde estes dados. A chave é exibida <strong>uma única vez</strong> e não pode ser recuperada.</p>
+        <div class="credencial"><span>Protocolo</span><code id="s-protocolo"></code></div>
+        <div class="credencial"><span>Chave de acompanhamento</span><code id="s-chave"></code></div>
+        <button class="secundario" id="s-copiar" type="button">Copiar os dois</button>
+      </div>
+    </section>
+
+    <!-- ================= ACOMPANHAR ================= -->
+    <section id="tab-acompanhar" class="aba" hidden>
+      <h1>Acompanhe sua denúncia</h1>
+      <form id="form-acomp" class="cartao">
+        <label>Protocolo <input id="a-protocolo" required placeholder="DEN-2026-XXXXXXXX"></label>
+        <label>Chave de acompanhamento <input id="a-chave" type="password" required autocomplete="off"></label>
+        <button class="primario" type="submit">Consultar</button>
+        <p id="a-erro" class="erro" role="alert"></p>
+      </form>
+
+      <div id="a-resultado" hidden>
+        <div class="cartao">
+          <div class="cabeca">
+            <h2 id="r-protocolo"></h2>
+            <span id="r-status" class="selo"></span>
+          </div>
+          <p class="meta" id="r-meta"></p>
+          <h3>Sua denúncia</h3>
+          <p id="r-descricao" class="texto"></p>
+        </div>
+        <div class="cartao">
+          <h3>Andamento</h3>
+          <ol id="r-timeline" class="timeline"></ol>
+        </div>
+        <div class="cartao" id="r-msg-bloco">
+          <h3>Enviar informação adicional</h3>
+          <textarea id="r-msg" rows="3" maxlength="2000" placeholder="Complemente sua denúncia ou responda à equipe."></textarea>
+          <button class="secundario" id="r-enviar" type="button">Enviar mensagem</button>
+        </div>
+        <div class="cartao" id="r-revogar-bloco" hidden>
+          <h3>Seus direitos (LGPD, art. 18)</h3>
+          <p>Você forneceu identificação. Pode revogar o consentimento e eliminar seus dados de identificação; a denúncia continua de forma anônima.</p>
+          <button class="perigo" id="r-revogar" type="button">Eliminar minha identificação</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= EQUIPE ================= -->
+    <section id="tab-painel" class="aba" hidden>
+      <div id="login-bloco">
+        <h1>Área da equipe</h1>
+        <form id="form-login" class="cartao estreito">
+          <label>E-mail <input id="l-email" type="email" required></label>
+          <label>Senha <input id="l-senha" type="password" required></label>
+          <button class="primario" type="submit">Entrar</button>
+          <p id="l-erro" class="erro" role="alert"></p>
+        </form>
+      </div>
+
+      <div id="painel-bloco" hidden>
+        <div class="cabeca">
+          <h1>Painel</h1>
+          <div><span id="p-usuario" class="meta"></span> <button class="secundario" id="p-sair">Sair</button></div>
+        </div>
+
+        <div class="subnav" id="subnav">
+          <button data-sub="denuncias" class="ativo">Denúncias</button>
+          <button data-sub="usuarios" class="so-admin">Usuários</button>
+          <button data-sub="auditoria" class="so-admin">Auditoria</button>
+        </div>
+
+        <div id="sub-denuncias">
+          <div class="filtros">
+            <select id="f-status">
+              <option value="">Todos os status</option>
+              <option value="recebida">Recebida</option>
+              <option value="em_analise">Em análise</option>
+              <option value="procedente">Procedente</option>
+              <option value="improcedente">Improcedente</option>
+              <option value="encerrada">Encerrada</option>
+            </select>
+          </div>
+          <div class="cartao tabela-wrap">
+            <table id="t-denuncias">
+              <thead><tr><th>Protocolo</th><th>Categoria</th><th>Status</th><th>Anônima</th><th>Atualizada</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div id="detalhe" class="cartao" hidden>
+            <div class="cabeca"><h2 id="x-protocolo"></h2><span id="x-status" class="selo"></span></div>
+            <p class="meta" id="x-meta"></p>
+            <h3>Descrição</h3>
+            <p class="texto" id="x-descricao"></p>
+            <h3>Histórico</h3>
+            <ol id="x-timeline" class="timeline"></ol>
+
+            <h3>Atualizar</h3>
+            <label>Novo status
+              <select id="x-novo-status">
+                <option value="em_analise">Em análise</option>
+                <option value="procedente">Procedente</option>
+                <option value="improcedente">Improcedente</option>
+                <option value="encerrada">Encerrada</option>
+                <option value="recebida">Recebida</option>
+              </select>
+            </label>
+            <label>Mensagem ao denunciante <span class="op">(pública)</span> <textarea id="x-pub" rows="2" maxlength="2000"></textarea></label>
+            <label>Nota interna <span class="op">(só equipe)</span> <textarea id="x-int" rows="2" maxlength="2000"></textarea></label>
+            <button class="primario" id="x-salvar" type="button">Salvar</button>
+
+            <div id="x-ident-bloco" class="so-admin" hidden>
+              <h3>Identidade do denunciante</h3>
+              <p class="dica">Acesso restrito ao encarregado. Exige motivo e fica registrado na auditoria.</p>
+              <input id="x-motivo" placeholder="Motivo do acesso (mín. 10 caracteres)">
+              <button class="secundario" id="x-ver-ident" type="button">Revelar identidade</button>
+              <pre id="x-ident" class="ident" hidden></pre>
+            </div>
+            <p id="x-erro" class="erro" role="alert"></p>
+          </div>
+        </div>
+
+        <div id="sub-usuarios" hidden>
+          <form id="form-usuario" class="cartao">
+            <h3>Novo usuário</h3>
+            <label>Nome <input id="u-nome" required></label>
+            <label>E-mail <input id="u-email" type="email" required></label>
+            <label>Senha <input id="u-senha" type="password" required></label>
+            <label>Papel
+              <select id="u-papel"><option value="analista">Analista</option><option value="admin">Admin (encarregado)</option></select>
+            </label>
+            <button class="primario" type="submit">Criar</button>
+            <p id="u-erro" class="erro" role="alert"></p>
+          </form>
+          <div class="cartao tabela-wrap">
+            <table id="t-usuarios"><thead><tr><th>Nome</th><th>E-mail</th><th>Papel</th><th>Ativo</th><th></th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+
+        <div id="sub-auditoria" hidden>
+          <div class="cartao">
+            <button class="secundario" id="au-verificar" type="button">Verificar integridade da trilha</button>
+            <button class="secundario" id="au-retencao" type="button">Executar política de retenção</button>
+            <p id="au-msg" class="meta"></p>
+          </div>
+          <div class="cartao tabela-wrap">
+            <table id="t-auditoria"><thead><tr><th>Data</th><th>Ator</th><th>Ação</th><th>Alvo</th><th>Detalhe</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap rodape">
+    Tratamento de dados conforme a LGPD (Lei nº 13.709/2018). Dados criptografados em repouso, acesso restrito e auditado.
+  </footer>
+  <script src="/static/app.js"></script>
+</body>
+</html>
